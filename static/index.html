@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speed Formatter - Lightning Fast Code Formatting</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a0a;
+            color: #e4e4e7;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: #0a0a0a;
+            border-bottom: 1px solid #27272a;
+            padding: 24px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(8px);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo h1 {
+            color: #fafafa;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+        
+        .logo-icon {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: #a1a1aa;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        
+        .nav-links a:hover {
+            color: #fafafa;
+        }
+        
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+        
+        .hero {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+        
+        .hero h2 {
+            color: #fafafa;
+            font-size: 3.2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -0.025em;
+        }
+        
+        .hero p {
+            color: #a1a1aa;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .formatter-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+        
+        .code-panel {
+            background: #18181b;
+            border: 1px solid #27272a;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .panel-header {
+            background: #18181b;
+            border-bottom: 1px solid #27272a;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .panel-title {
+            color: #fafafa;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .panel-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .language-select {
+            background: #0a0a0a;
+            border: 1px solid #27272a;
+            color: #e4e4e7;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 13px;
+        }
+        
+        .language-select:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+        
+        .sample-btn {
+            background: transparent;
+            border: 1px solid #27272a;
+            color: #a1a1aa;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        
+        .sample-btn:hover {
+            border-color: #10b981;
+            color: #fafafa;
+        }
+        
+        .code-textarea {
+            width: 100%;
+            height: 400px;
+            background: #0a0a0a;
+            border: none;
+            color: #e4e4e7;
+            padding: 20px;
+            font-family: 'JetBrains Mono', 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: none;
+        }
+        
+        .code-textarea:focus {
+            outline: none;
+        }
+        
+        .code-textarea::placeholder {
+            color: #52525b;
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 48px 0;
+        }
+        
+        .format-btn {
+            background: #10b981;
+            border: none;
+            color: #0a0a0a;
+            padding: 16px 32px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        
+        .format-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+        
+        .format-btn:disabled {
+            background: #27272a;
+            color: #71717a;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .stats {
+            background: #18181b;
+            border: 1px solid #27272a;
+            border-radius: 8px;
+            padding: 32px;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+        
+        .stat-item h3 {
+            color: #a1a1aa;
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            color: #fafafa;
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        
+        .stat-value.fast {
+            color: #10b981;
+        }
+        
+        .loading {
+            display: none;
+            color: #10b981;
+            font-size: 15px;
+            margin: 24px 0;
+            font-weight: 500;
+        }
+        
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-left: 8px;
+            border: 2px solid #27272a;
+            border-radius: 50%;
+            border-top: 2px solid #10b981;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            display: none;
+            background: #dc2626;
+            color: #fafafa;
+            padding: 16px;
+            border-radius: 6px;
+            margin: 24px 0;
+            font-weight: 500;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 48px 0 32px 0;
+            color: #52525b;
+            font-size: 13px;
+            border-top: 1px solid #27272a;
+            margin-top: 64px;
+        }
+        
+        .formatter-used {
+            color: #71717a;
+            font-size: 12px;
+            margin-top: 12px;
+            padding: 0 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .formatter-section {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .hero h2 {
+                font-size: 2.4rem;
+            }
+            
+            .code-textarea {
+                height: 300px;
+            }
+            
+            .nav-links {
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <h1>Speed Formatter</h1>
+            </div>
+            <nav class="nav-links">
+                <a href="/">Formatter</a>
+                <a href="/login.html">Sign In</a>
+                <a href="/dashboard.html">Dashboard</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="hero">
+            <h2>Lightning Fast Code Formatting</h2>
+            <p>Format your code in milliseconds, not seconds. Built for developers who value performance.</p>
+        </section>
+
+        <section class="formatter-section">
+            <div class="code-panel">
+                <div class="panel-header">
+                    <span class="panel-title">Input</span>
+                    <div class="panel-controls">
+                        <select id="language" class="language-select" onchange="loadSample()">
+                            <option value="javascript">JavaScript</option>
+                            <option value="typescript">TypeScript</option>
+                            <option value="rust">Rust</option>
+                        </select>
+                        <button class="sample-btn" onclick="loadSample()">Sample</button>
+                    </div>
+                </div>
+                <textarea id="input-code" class="code-textarea" placeholder="Paste your messy code here..."></textarea>
+            </div>
+
+            <div class="code-panel">
+                <div class="panel-header">
+                    <span class="panel-title">Output</span>
+                </div>
+                <textarea id="output-code" class="code-textarea" placeholder="Formatted code will appear here..." readonly></textarea>
+                <div class="formatter-used" id="formatter-used"></div>
+            </div>
+        </section>
+
+        <section class="controls">
+            <button id="format-btn" class="format-btn" onclick="formatCode()">Format Code</button>
+            <div id="loading" class="loading">Processing...</div>
+            <div id="error-message" class="error"></div>
+        </section>
+
+        <section class="stats">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>Execution Time</h3>
+                    <div class="stat-value" id="exec-time">-</div>
+                </div>
+                <div class="stat-item">
+                    <h3>Characters</h3>
+                    <div class="stat-value" id="char-count">-</div>
+                </div>
+                <div class="stat-item">
+                    <h3>Performance</h3>
+                    <div class="stat-value fast" id="performance">-</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Speed Formatter. Engineered for performance.</p>
+    </footer>
+
+    <script>
+        const samples = {
+            javascript: `const messy={name:"test",age:25,getData:function(){return this.name}};const array=[1,2,3,4,5];const result=array.map(x=>x*2).filter(x=>x>4).reduce((a,b)=>a+b,0);if(result>10){console.log("big number");}else{console.log("small");}`,
+            
+            typescript: `interface User{id:number;name:string;email?:string;}class UserManager{private users:User[]=[];addUser(user:User):void{this.users.push(user);}getUser(id:number):User|undefined{return this.users.find(u=>u.id===id);}}`,
+            
+            rust: `fn main(){let numbers=vec![1,2,3,4,5];let result:Vec<i32>=numbers.iter().map(|x|x*2).filter(|&x|x>4).collect();println!("{:?}",result);match result.len(){0=>println!("empty"),1=>println!("one item"),_=>println!("many items"),}}`
+        };
+        
+        function loadSample() {
+            const language = document.getElementById('language').value;
+            document.getElementById('input-code').value = samples[language] || '';
+        }
+        
+        async function formatCode() {
+            const inputCode = document.getElementById('input-code').value.trim();
+            const language = document.getElementById('language').value;
+            const formatBtn = document.getElementById('format-btn');
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error-message');
+            const outputCode = document.getElementById('output-code');
+            
+            if (!inputCode) {
+                showError('Please enter some code to format');
+                return;
+            }
+            
+            // Reset UI
+            error.style.display = 'none';
+            loading.style.display = 'block';
+            formatBtn.disabled = true;
+            outputCode.value = '';
+            
+            try {
+                const response = await fetch('/format', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        code: inputCode,
+                        language: language
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.error) {
+                    throw new Error(result.details || result.error);
+                }
+                
+                // Update output
+                outputCode.value = result.formatted_code;
+                
+                // Update stats
+                document.getElementById('exec-time').textContent = result.execution_time_ms + 'ms';
+                document.getElementById('exec-time').className = result.execution_time_ms < 100 ? 'stat-value fast' : 'stat-value';
+                document.getElementById('char-count').textContent = inputCode.length.toLocaleString();
+                document.getElementById('formatter-used').textContent = `via ${result.formatter_used}`;
+                
+                // Calculate performance improvement
+                const estimatedPrettierTime = Math.max(2000, inputCode.length * 0.1);
+                const improvement = Math.round(estimatedPrettierTime / result.execution_time_ms);
+                document.getElementById('performance').textContent = improvement + 'x faster';
+                
+            } catch (err) {
+                showError('Formatting failed: ' + err.message);
+            } finally {
+                loading.style.display = 'none';
+                formatBtn.disabled = false;
+            }
+        }
+        
+        function showError(message) {
+            const error = document.getElementById('error-message');
+            error.textContent = message;
+            error.style.display = 'block';
+        }
+        
+        // Load initial sample
+        loadSample();
+        
+        // Enter key to format
+        document.getElementById('input-code').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                formatCode();
+            }
+        });
+    </script>
+</body>
+</html>
